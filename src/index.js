@@ -1,5 +1,5 @@
 import "./css/base.css";
 
-import { sayHello } from "./js/utils";
+import { pageState } from "./js/utils";
 
-console.log(sayHello("Hello"));
+pageState();
