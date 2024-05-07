@@ -4,6 +4,7 @@ import {
   nodeMain,
   nodeTodoCount,
   newTodo,
+  completeButton,
 } from "./node.js";
 
 //1. Ocultar las secciones main y footer
@@ -53,6 +54,7 @@ export function addTaskEvents(task) {
   checkbox.addEventListener("click", function () {
     task.classList.toggle("completed");
     saveDataToLocalStorage();
+    updateTodoCount();
   });
   label.addEventListener("dblclick", function () {
     task.classList.add("editing");
@@ -76,6 +78,7 @@ export function addTaskEvents(task) {
     if (event.key === "Enter") {
       label.textContent = editInput.value.trim();
       task.classList.remove("editing");
+
       saveDataToLocalStorage();
     }
   });
@@ -89,8 +92,17 @@ export function addTaskEvents(task) {
 //5.Contador
 function updateTodoCount() {
   const pendingTasks = todoList.querySelectorAll("li:not(.completed)").length;
+  const completedTasks = todoList.querySelectorAll("li.completed").length;
+
   const itemText = pendingTasks === 1 ? "item" : "items";
   nodeTodoCount.innerHTML = `<strong>${pendingTasks}</strong> ${itemText} left`;
+
+  if (completedTasks > 0) {
+    completeButton.style.display = "block";
+  } else {
+    completeButton.style.display = "none";
+  }
+
   pageState();
 }
 //6.Botón de limpiar
