@@ -6,12 +6,14 @@ import {
   clearCompletedTasks,
   saveDataToLocalStorage,
   loadDataFromLocalStorage,
+  filterTasks,
 } from "./js/utils";
 import { newTodo, completeButton } from "./js/node";
 
 document.addEventListener("DOMContentLoaded", function () {
   pageState();
   loadDataFromLocalStorage();
+  window.addEventListener("hashchange", filterTasks);
 });
 
 newTodo.addEventListener("keypress", function (event) {

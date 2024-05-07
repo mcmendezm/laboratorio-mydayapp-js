@@ -124,9 +124,49 @@ export function loadDataFromLocalStorage() {
       </div>
       <input class="edit" value="${task.content}">
     `;
+    if (task.completed) {
+      todoItem.classList.add("completed");
+    }
     todoList.appendChild(todoItem);
     addTaskEvents(todoItem);
   });
   updateTodoCount();
 }
 //8.Filtros y rutas
+export function filterTasks() {
+  const hash = window.location.hash;
+  const allTasks = document.querySelectorAll(".todo-list li");
+  const filterLinks = document.querySelectorAll(".filters a");
+
+  filterLinks.forEach((link) => {
+    if (link.getAttribute("href") === hash) {
+      link.classList.add("selected");
+    } else {
+      link.classList.remove("selected");
+    }
+  });
+
+  allTasks.forEach((task) => {
+    switch (hash) {
+      case "#/all":
+        task.style.display = "flex";
+        break;
+      case "#/pending":
+        if (task.classList.contains("completed")) {
+          task.style.display = "none";
+        } else {
+          task.style.display = "flex";
+        }
+        break;
+      case "#/completed":
+        if (!task.classList.contains("completed")) {
+          task.style.display = "none";
+        } else {
+          task.style.display = "flex";
+        }
+        break;
+      default:
+        task.style.display = "flex";
+    }
+  });
+}
