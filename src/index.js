@@ -1,12 +1,26 @@
 import "./css/base.css";
 
-import { pageState, createNewTodo } from "./js/utils";
-import { newTodo } from "./js/node";
+import {
+  pageState,
+  createNewTodo,
+  clearCompletedTasks,
+  saveDataToLocalStorage,
+  loadDataFromLocalStorage,
+} from "./js/utils";
+import { newTodo, completeButton } from "./js/node";
 
-pageState();
-// Agregar evento de escucha para crear una nueva tarea al presionar Enter
+document.addEventListener("DOMContentLoaded", function () {
+  pageState();
+  loadDataFromLocalStorage();
+});
+
 newTodo.addEventListener("keypress", function (event) {
   if (event.key === "Enter") {
     createNewTodo();
+    saveDataToLocalStorage();
   }
+});
+completeButton.addEventListener("click", function () {
+  clearCompletedTasks();
+  saveDataToLocalStorage();
 });

@@ -3,19 +3,17 @@ import {
   nodeFooter,
   nodeMain,
   nodeTodoCount,
-  completeButton,
-  nodeFilters,
   newTodo,
 } from "./node.js";
 
 //1. Ocultar las secciones main y footer
-export function pageState(display = false) {
+export function pageState() {
   const initialState = JSON.parse(localStorage.getItem("mydayapp-js")) || [];
-
-  if (initialState.length > 1) {
+  console.log({ initialState });
+  if (initialState.length > 0) {
     nodeFooter.classList.remove("hidden");
     nodeMain.classList.remove("hidden");
-  } else if (display) {
+  } else {
     nodeFooter.classList.add("hidden");
     nodeMain.classList.add("hidden");
   }
@@ -41,6 +39,7 @@ export function createNewTodo() {
 
     saveDataToLocalStorage();
     addTaskEvents(todoItem);
+    updateTodoCount();
   }
 }
 
@@ -70,6 +69,7 @@ export function addTaskEvents(task) {
   destroyButton.addEventListener("click", function () {
     task.remove();
     saveDataToLocalStorage();
+    updateTodoCount();
   });
 
   editInput.addEventListener("keypress", function (event) {
@@ -86,8 +86,22 @@ export function addTaskEvents(task) {
     }
   });
 }
+//5.Contador
+function updateTodoCount() {
+  const pendingTasks = todoList.querySelectorAll("li:not(.completed)").length;
+  const itemText = pendingTasks === 1 ? "item" : "items";
+  nodeTodoCount.innerHTML = `<strong>${pendingTasks}</strong> ${itemText} left`;
+  pageState();
+}
+//6.Botón de limpiar
+export function clearCompletedTasks() {
+  const completedTasks = todoList.querySelectorAll("li.completed");
+  completedTasks.forEach((task) => task.remove());
+  saveDataToLocalStorage();
+}
+//7.Persistencia
 
-function saveDataToLocalStorage() {
+export function saveDataToLocalStorage() {
   const tasks = Array.from(todoList.children).map((todo) => {
     return {
       content: todo.querySelector("label").textContent,
@@ -96,3 +110,23 @@ function saveDataToLocalStorage() {
   });
   localStorage.setItem("mydayapp-js", JSON.stringify(tasks));
 }
+export function loadDataFromLocalStorage() {
+  const savedTasks = JSON.parse(localStorage.getItem("mydayapp-js")) || [];
+  savedTasks.forEach((task) => {
+    const todoItem = document.createElement("li");
+    todoItem.innerHTML = `
+      <div class="view ${task.completed ? "completed" : ""}">
+        <input class="toggle" type="checkbox" ${
+          task.completed ? "checked" : ""
+        }>
+        <label>${task.content}</label>
+        <button class="destroy"></button>
+      </div>
+      <input class="edit" value="${task.content}">
+    `;
+    todoList.appendChild(todoItem);
+    addTaskEvents(todoItem);
+  });
+  updateTodoCount();
+}
+//8.Filtros y rutas
